@@ -17,16 +17,15 @@ router.get("/api/movies/:id",async (req,res)=>{
 
     const movie = await Movies.findById(id);
     res.json(movie)
-})
+});
 
 //get by title
-router.get("/api/movies/title/:title",async (req,res)=>{   
+router.get("/api/movies/title/:title", async (req,res)=>{   
     const {title} = req.params;
     console.log(title);
-
     const movie = await Movies.find({title : title});
     res.json(movie)
-})
+});
 
 //create movie
 router.post("/api/movies",async (req,res) =>{
@@ -48,12 +47,25 @@ router.post("/api/movies",async (req,res) =>{
 
 //put movies
 router.put("/api/movies/:id",async (req,res) =>{
-    const {id} = req.params;
-    const updatemovie = req.body;
+    try{
+        const {id} = req.params;
+        const updateMovie = req.body;
     
-    await Movies.findByIdAndUpdate(id, updatemovie);
+        await Movies.findByIdAndUpdate(id, updateMovie);
+        const movies = await Movies.find();//mostrar la informacion modificada
+        res.json(movies)
+    }catch(error){
+        res.status(500).json({msg:error});
+    }
+});
+
+//delete by id
+router.delete("/api/movies/:id",async (req,res) =>{
+    const {id}= req.params;
+
+    await Movies.findByIdAndDelete(id);
     const movies = await Movies.find();
-    res.json(movies)
+    res.json(movies);
 })
 
 module.exports= router;
